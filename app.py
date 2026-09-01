@@ -6,6 +6,71 @@ from excel_sheet_view import render_excel_sheet_view
 # Page Setup
 st.set_page_config(page_title="Latif Mansion Portal", layout="wide", initial_sidebar_state="collapsed")
 
+# Custom CSS for Mobile Responsiveness & Modern Dashboard UI
+st.markdown("""
+    <style>
+    /* Main Background & Clean Typography */
+    .stApp {
+        background-color: #0e1117;
+        color: #fafafa;
+    }
+    
+    /* Modern Card / Container Styling */
+    div.block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Top Header Styling */
+    .header-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Buttons styling for better mobile touch targets */
+    .stButton>button {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    /* Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 45px;
+        white-space: pre-wrap;
+        background-color: #1a1c24;
+        border-radius: 8px 8px 0px 0px;
+        color: #ffffff;
+        font-weight: 600;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #ff4b4b !important;
+        color: white !important;
+    }
+
+    /* Mobile View Enhancements */
+    @media(max-width: 768px) {
+        .header-title {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        div.block-container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Session State Initializations
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
@@ -19,15 +84,15 @@ if "admin_password" not in st.session_state:
     st.session_state.admin_password = "admin123"
 
 def render_main_app():
-    # Top Header Bar
-    col_h1, col_h2, col_h3 = st.columns([3, 1, 1])
+    # Top Header Bar (Responsive columns for Mobile & Desktop)
+    col_h1, col_h2, col_h3 = st.columns([2.5, 1, 1])
     with col_h1:
-        st.markdown(f"### 🏢 LATIF MANSION PORTAL [{st.session_state.username.upper()}]")
+        st.markdown(f'<div class="header-title">🏢 LATIF MANSION [{st.session_state.username.upper()}]</div>', unsafe_allow_html=True)
     
     with col_h2:
         if st.session_state.is_admin:
-            if st.button("⚙️ Reset Password", use_container_width=True):
-                st.session_state.show_pass_reset = True
+            if st.button("⚙️ Reset Pass", use_container_width=True):
+                st.session_state.show_pass_reset = not st.session_state.get("show_pass_reset", False)
         
     with col_h3:
         if st.button("🚪 Logout", use_container_width=True):
@@ -38,23 +103,24 @@ def render_main_app():
             
     # Password Reset Popup / Box for Admin
     if st.session_state.get("show_pass_reset", False):
-        st.markdown("---")
-        st.subheader("Change Admin Password")
-        new_p = st.text_input("New Admin Password", type="password", key="new_admin_pass")
-        if st.button("Save New Password"):
-            if new_p:
-                st.session_state.admin_password = new_p
-                st.success("Admin password updated successfully!")
-                st.session_state.show_pass_reset = False
-                st.rerun()
-            else:
-                st.warning("Password cannot be empty!")
-        st.markdown("---")
+        with st.container():
+            st.markdown("---")
+            st.subheader("Change Admin Password")
+            new_p = st.text_input("New Admin Password", type="password", key="new_admin_pass")
+            if st.button("Save New Password"):
+                if new_p:
+                    st.session_state.admin_password = new_p
+                    st.success("Admin password updated successfully!")
+                    st.session_state.show_pass_reset = False
+                    st.rerun()
+                else:
+                    st.warning("Password cannot be empty!")
+            st.markdown("---")
 
     st.divider()
     
-    # Tabs routing to components
-    tab1, tab2 = st.tabs(["Receipt Generator", "Excel Sheet View"])
+    # Tabs routing to components with modern styling
+    tab1, tab2 = st.tabs(["📄 Receipt Generator", "📊 Excel Sheet View"])
     
     with tab1:
         render_receipt_generator()
