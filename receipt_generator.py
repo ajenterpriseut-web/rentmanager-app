@@ -47,7 +47,7 @@ def generate_pdf_bytes(data):
     c.rect(40, start_y + 15, 532, 18, fill=1, stroke=0)
     c.setFillColorRGB(1, 1, 1)
     c.setFont(FONT_NAME, 9)
-    c.drawCentredString(width / 2.0, start_y + 20, "RENT RECEIPT / ভাড়ার রসিদ")
+    c.drawCentredString(width / 2.0, start_y + 20, "RENT RECEIPT")
     
     # Meta Info Box
     c.setStrokeColorRGB(0.5, 0.5, 0.5)
@@ -183,12 +183,13 @@ def render_receipt_generator():
         service = st.number_input("Service Charge", value=2000.0)
         other = st.number_input("Other Expenses", value=0.0)
 
+    used_units = max(0.0, curr_reading - prev_reading)
+    electricity = used_units * unit_rate
+    total = rent + electricity + water + service + bonus + other
+    in_words = number_to_words(total)
+
     if st.button("💾 Save Data to Database", type="primary", use_container_width=True):
         try:
-            used_units = max(0, curr_reading - prev_reading)
-            electricity = used_units * unit_rate
-            total = rent + electricity + water + service + bonus + other
-
             record = {
                 "shop_name": selected_shop,
                 "shop_no": receipt_no,
@@ -211,11 +212,6 @@ def render_receipt_generator():
         except Exception as e:
             st.error(f"Error saving data: {e}")
 
-    used_units = max(0, curr_reading - prev_reading)
-    electricity = used_units * unit_rate
-    total = rent + electricity + water + service + bonus + other
-    in_words = number_to_words(total)
-
     pdf_bytes = generate_pdf_bytes({
         "shop_name": selected_shop,
         "receipt_no": receipt_no,
@@ -226,7 +222,7 @@ def render_receipt_generator():
         "rent": rent,
         "curr_reading": int(curr_reading) if curr_reading else "-",
         "prev_reading": int(prev_reading) if prev_reading else "-",
-        "used_units": int(used_units) if used_units else "-",
+        "used_units": int(used_units) if used_units > 0 else "-",
         "unit_rate": unit_rate if unit_rate else "-",
         "electricity": electricity,
         "water": water,
