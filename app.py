@@ -17,25 +17,28 @@ st.markdown("""
     
     /* Modern Card / Container Styling */
     div.block-container {
-        padding-top: 2rem;
+        padding-top: 1.5rem;
         padding-bottom: 2rem;
+        max-width: 100%;
     }
     
     /* Top Header Styling */
     .header-title {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         font-weight: 700;
         color: #ffffff;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+        padding-top: 5px;
     }
 
-    /* Buttons styling for better mobile touch targets */
+    /* Buttons styling for better touch targets */
     .stButton>button {
         border-radius: 8px;
         font-weight: 600;
         transition: all 0.3s ease;
+        width: 100%;
     }
     
     /* Tabs Styling */
@@ -61,11 +64,11 @@ st.markdown("""
     @media(max-width: 768px) {
         .header-title {
             font-size: 1.1rem;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         div.block-container {
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding-left: 0.8rem;
+            padding-right: 0.8rem;
         }
     }
     </style>
@@ -84,13 +87,17 @@ if "admin_password" not in st.session_state:
     st.session_state.admin_password = "admin123"
 
 def render_main_app():
-    # Top Header Bar (Responsive columns for Mobile & Desktop)
-    col_h1, col_h2, col_h3 = st.columns([2.5, 1, 1])
+    # Responsive Top Header Layout to prevent cutting off
+    if st.session_state.is_admin:
+        col_h1, col_h2, col_h3 = st.columns([2.2, 1.1, 1])
+    else:
+        col_h1, col_h3 = st.columns([3, 1])
+        
     with col_h1:
         st.markdown(f'<div class="header-title">🏢 LATIF MANSION [{st.session_state.username.upper()}]</div>', unsafe_allow_html=True)
     
-    with col_h2:
-        if st.session_state.is_admin:
+    if st.session_state.is_admin:
+        with col_h2:
             if st.button("⚙️ Reset Pass", use_container_width=True):
                 st.session_state.show_pass_reset = not st.session_state.get("show_pass_reset", False)
         
