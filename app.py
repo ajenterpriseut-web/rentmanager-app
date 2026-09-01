@@ -6,7 +6,7 @@ from excel_sheet_view import render_excel_sheet_view
 # Page Setup
 st.set_page_config(page_title="Latif Mansion Portal", layout="wide", initial_sidebar_state="collapsed")
 
-# Custom CSS for Mobile Responsiveness & Modern Dashboard UI
+# Custom CSS for Perfect Header Visibility & Mobile Responsiveness
 st.markdown("""
     <style>
     /* Main Background & Clean Typography */
@@ -15,9 +15,9 @@ st.markdown("""
         color: #fafafa;
     }
     
-    /* Modern Card / Container Styling */
+    /* Fixed Container Padding so header is never cut off */
     div.block-container {
-        padding-top: 1.5rem;
+        padding-top: 3.5rem !important;
         padding-bottom: 2rem;
         max-width: 100%;
     }
@@ -67,6 +67,7 @@ st.markdown("""
             margin-bottom: 8px;
         }
         div.block-container {
+            padding-top: 4rem !important;
             padding-left: 0.8rem;
             padding-right: 0.8rem;
         }
